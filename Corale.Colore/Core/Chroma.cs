@@ -466,7 +466,7 @@ namespace Corale.Colore.Core
             foreach (Guid deviceId in devices)
             {
                 var deviceInfo = Query(deviceId);
-                if (!deviceInfo.Connected)
+                if (deviceInfo.Connected)
                     _devices.Add(deviceInfo);
             }
 
