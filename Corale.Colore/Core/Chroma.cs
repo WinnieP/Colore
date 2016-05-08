@@ -26,7 +26,10 @@
 namespace Corale.Colore.Core
 {
     using System;
+
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Security;
 
     using Corale.Colore.Annotations;
@@ -56,6 +59,11 @@ namespace Corale.Colore.Core
         /// Holds the application-wide instance of the <see cref="IChroma" /> interface.
         /// </summary>
         private static IChroma _instance;
+
+        /// <summary>
+        /// Keeps a record of connected devices.
+        /// </summary>
+        private static IList<DeviceInfo> _devices;
 
         /// <summary>
         /// Keeps track of whether we have registered to receive Chroma events.
@@ -128,6 +136,18 @@ namespace Corale.Colore.Core
                 {
                     return _instance ?? (_instance = new Chroma());
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of currently connected devices.
+        /// </summary>
+        [PublicAPI]
+        public static IList<DeviceInfo> ConnectedDevices
+        {
+            get
+            {
+                return _devices;
             }
         }
 
@@ -252,6 +272,7 @@ namespace Corale.Colore.Core
             Log.Info("Chroma is initializing.");
             Log.Debug("Calling SDK Init function");
             NativeWrapper.Init();
+            GetConnectedDevices();
             Initialized = true;
             Log.Debug("Resetting _registeredHandle");
             _registeredHandle = IntPtr.Zero;
@@ -430,6 +451,26 @@ namespace Corale.Colore.Core
         internal static void InitInstance()
         {
             Instance.Initialize();
+        }
+
+        /// <summary>
+        /// Queries for a list of connected devices.
+        /// </summary>
+        /// <returns>List of connected Devices</returns>
+        [PublicAPI]
+        private IList<DeviceInfo> GetConnectedDevices()
+        {
+            _devices = new List<DeviceInfo>();
+
+            var devices = (from field in typeof(Devices).GetFields() where field.FieldType == typeof(Guid) select (Guid)field.GetValue(typeof(Devices))).ToList();
+            foreach (Guid deviceId in devices)
+            {
+                var deviceInfo = Query(deviceId);
+                if (!deviceInfo.Connected)
+                    _devices.Add(deviceInfo);
+            }
+
+            return _devices;
         }
 
         /// <summary>
