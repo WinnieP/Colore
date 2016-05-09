@@ -226,6 +226,7 @@ namespace Corale.Colore.Core
                     throw new ColoreException("Device query failed, ptr NULL.");
 
                 var info = (DeviceInfo)Marshal.PtrToStructure(ptr, typeof(DeviceInfo));
+                info.DeviceId = id;
 
                 return info;
             }

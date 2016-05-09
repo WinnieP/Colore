@@ -25,6 +25,7 @@
 
 namespace Corale.Colore.Razer
 {
+    using System;
     using System.Runtime.InteropServices;
 
     using Corale.Colore.Annotations;
@@ -46,5 +47,11 @@ namespace Corale.Colore.Razer
         /// </summary>
         [PublicAPI]
         public readonly bool Connected;
+
+        /// <summary>
+        /// Gets the Device Id.
+        /// </summary>
+        [PublicAPI]
+        public Guid DeviceId { get; internal set; }
     }
 }
