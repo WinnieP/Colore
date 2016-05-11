@@ -26,7 +26,8 @@
 namespace Corale.Colore.Core
 {
     using System;
-
+    using System.Collections.Generic;
+    using System.Linq;
     using Corale.Colore.Razer.Headset.Effects;
 
     using log4net;
@@ -52,13 +53,19 @@ namespace Corale.Colore.Core
         private static IHeadset _instance;
 
         /// <summary>
+        /// Holds the list of connected Headsets.
+        /// </summary>
+        private List<Guid> _connectedDevices;
+
+        /// <summary>
         /// Prevents a default instance of the <see cref="Headset" /> class from being created.
         /// </summary>
         private Headset()
         {
             Log.Info("Headset is initializing");
             Chroma.InitInstance();
-            _connected = Chroma.Instance.Query(Razer.Devices.Kraken71).Connected;
+            _connectedDevices = Chroma.Instance.Query(Razer.DeviceType.Headset);
+            _connected = _connectedDevices.Count > 0;
         }
 
         /// <summary>
@@ -72,6 +79,14 @@ namespace Corale.Colore.Core
         public bool Connected
         {
             get { return _connected; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this device type is connected.
+        /// </summary>
+        public IList<Guid> ConnectedDevices
+        {
+            get { return _connectedDevices; }
         }
 
         /// <summary>

@@ -63,7 +63,7 @@ namespace Corale.Colore.Core
         /// <summary>
         /// Keeps a record of connected devices.
         /// </summary>
-        private static IDictionary<Guid, DeviceInfo> _devices;
+        private static IDictionary<Guid, DeviceInfo> _connectedDevices;
 
         /// <summary>
         /// Keeps track of whether we have registered to receive Chroma events.
@@ -143,11 +143,21 @@ namespace Corale.Colore.Core
         /// Gets a list of currently connected devices.
         /// </summary>
         [PublicAPI]
-        public static IDictionary<Guid, DeviceInfo> ConnectedDevices
+        public IDictionary<Guid, DeviceInfo> ConnectedDevices
         {
             get
             {
-                return _devices;
+                _connectedDevices = new Dictionary<Guid, DeviceInfo>();
+
+            var devices = (from field in typeof(Devices).GetFields() where field.FieldType == typeof(Guid) select (Guid)field.GetValue(typeof(Devices))).ToList();
+            foreach (Guid deviceId in devices)
+            {
+                var deviceInfo = Query(deviceId);
+                if (deviceInfo.Connected)
+                    _connectedDevices.Add(deviceId, deviceInfo);
+            }
+
+            return _connectedDevices;
             }
         }
 
@@ -272,7 +282,6 @@ namespace Corale.Colore.Core
             Log.Info("Chroma is initializing.");
             Log.Debug("Calling SDK Init function");
             NativeWrapper.Init();
-            GetConnectedDevices();
             Initialized = true;
             Log.Debug("Resetting _registeredHandle");
             _registeredHandle = IntPtr.Zero;
@@ -320,6 +329,18 @@ namespace Corale.Colore.Core
 
             Log.DebugFormat("Information for {0} requested", deviceId);
             return NativeWrapper.QueryDevice(deviceId);
+        }
+
+        /// <summary>
+        /// Queries the SDK for connected devices of a specific device type.
+        /// </summary>
+        /// <param name="deviceType">The device type to query for, valid types can be found in <see cref="DeviceType" />.</param>
+        /// <returns>A list with information regarding the devices that are connected.</returns>
+        [SecurityCritical]
+        public List<Guid> Query(DeviceType deviceType)
+        {
+            Log.DebugFormat("Information for {0} requested", deviceType);
+            return Instance.ConnectedDevices.Where(x => x.Value.Type == DeviceType.Headset).Select(x => x.Key).ToList();
         }
 
         /// <summary>
@@ -451,26 +472,6 @@ namespace Corale.Colore.Core
         internal static void InitInstance()
         {
             Instance.Initialize();
-        }
-
-        /// <summary>
-        /// Queries for a list of connected devices.
-        /// </summary>
-        /// <returns>List of connected Devices</returns>
-        [PublicAPI]
-        private IDictionary<Guid, DeviceInfo> GetConnectedDevices()
-        {
-            _devices = new Dictionary<Guid, DeviceInfo>();
-
-            var devices = (from field in typeof(Devices).GetFields() where field.FieldType == typeof(Guid) select (Guid)field.GetValue(typeof(Devices))).ToList();
-            foreach (Guid deviceId in devices)
-            {
-                var deviceInfo = Query(deviceId);
-                if (deviceInfo.Connected)
-                    _devices.Add(deviceId, deviceInfo);
-            }
-
-            return _devices;
         }
 
         /// <summary>
