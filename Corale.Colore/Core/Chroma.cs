@@ -63,7 +63,7 @@ namespace Corale.Colore.Core
         /// <summary>
         /// Keeps a record of connected devices.
         /// </summary>
-        private static IList<DeviceInfo> _devices;
+        private static IDictionary<Guid, DeviceInfo> _devices;
 
         /// <summary>
         /// Keeps track of whether we have registered to receive Chroma events.
@@ -143,7 +143,7 @@ namespace Corale.Colore.Core
         /// Gets a list of currently connected devices.
         /// </summary>
         [PublicAPI]
-        public static IList<DeviceInfo> ConnectedDevices
+        public static IDictionary<Guid, DeviceInfo> ConnectedDevices
         {
             get
             {
@@ -458,16 +458,16 @@ namespace Corale.Colore.Core
         /// </summary>
         /// <returns>List of connected Devices</returns>
         [PublicAPI]
-        private IList<DeviceInfo> GetConnectedDevices()
+        private IDictionary<Guid, DeviceInfo> GetConnectedDevices()
         {
-            _devices = new List<DeviceInfo>();
+            _devices = new Dictionary<Guid, DeviceInfo>();
 
             var devices = (from field in typeof(Devices).GetFields() where field.FieldType == typeof(Guid) select (Guid)field.GetValue(typeof(Devices))).ToList();
             foreach (Guid deviceId in devices)
             {
                 var deviceInfo = Query(deviceId);
                 if (deviceInfo.Connected)
-                    _devices.Add(deviceInfo);
+                    _devices.Add(deviceId, deviceInfo);
             }
 
             return _devices;
