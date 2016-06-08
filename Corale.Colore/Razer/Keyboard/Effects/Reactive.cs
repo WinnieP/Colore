@@ -33,6 +33,7 @@ namespace Corale.Colore.Razer.Keyboard.Effects
     /// <summary>
     /// Describes the reactive effect type.
     /// </summary>
+    [EffectType(Effect.Reactive)]
     [StructLayout(LayoutKind.Sequential)]
     public struct Reactive
     {

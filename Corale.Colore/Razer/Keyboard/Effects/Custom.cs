@@ -35,6 +35,7 @@ namespace Corale.Colore.Razer.Keyboard.Effects
     /// <summary>
     /// Describes a custom grid effect for every key.
     /// </summary>
+    [EffectType(Effect.Custom)]
     [StructLayout(LayoutKind.Sequential)]
     public struct Custom : IEquatable<Custom>, IEquatable<Color[][]>, IEquatable<Color[]>
     {

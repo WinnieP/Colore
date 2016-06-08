@@ -31,6 +31,7 @@ namespace Corale.Colore.Razer.Keyboard.Effects
     /// <summary>
     /// Describes the starlight effect.
     /// </summary>
+    [EffectType(Effect.Starlight)]
     [StructLayout(LayoutKind.Sequential)]
     public struct Starlight
     {

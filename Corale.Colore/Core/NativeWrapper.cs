@@ -26,6 +26,8 @@
 namespace Corale.Colore.Core
 {
     using System;
+    using System.Collections.Generic;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Security;
 
@@ -42,6 +44,11 @@ namespace Corale.Colore.Core
         /// Logger instance for this class.
         /// </summary>
         private static readonly ILog Log = LogManager.GetLogger(typeof(NativeWrapper));
+
+        /// <summary>
+        /// Stores results from extracting effect type from effect structs for quicker access.
+        /// </summary>
+        private static readonly Dictionary<Type, int> EffectTypeCache = new Dictionary<Type, int>();
 
         /// <summary>
         /// Creates an effect for a device.
@@ -255,6 +262,31 @@ namespace Corale.Colore.Core
             {
                 Marshal.FreeHGlobal(ptr);
             }
+        }
+
+        /// <summary>
+        /// Helper method for creating keyboard effects from an effect struct.
+        /// </summary>
+        /// <typeparam name="T">The structure type, needs to be compatible with the keyboard.</typeparam>
+        /// <param name="struct">The effect structure.</param>
+        /// <returns>A <see cref="Guid" /> for the created effect.</returns>
+        internal static Guid CreateKeyboardEffect<T>(T @struct) where T : struct
+        {
+            int effectValue;
+
+            var structType = typeof(T);
+
+            if (EffectTypeCache.ContainsKey(structType))
+            {
+                effectValue = EffectTypeCache[structType];
+            }
+            else
+            {
+                effectValue = ((EffectTypeAttribute)typeof(T).GetCustomAttributes(typeof(EffectTypeAttribute), false)[0]).Value;
+                EffectTypeCache[structType] = effectValue;
+            }
+
+            return CreateKeyboardEffect((Razer.Keyboard.Effects.Effect)effectValue, @struct);
         }
 
         /// <summary>

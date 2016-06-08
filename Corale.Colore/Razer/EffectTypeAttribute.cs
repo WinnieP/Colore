@@ -1,5 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------
-// <copyright file="Wave.cs" company="Corale">
+﻿// <copyright file="EffectTypeAttribute.cs" company="Corale">
 //     Copyright © 2015 by Adam Hellberg and Brandon Scott.
 //
 //     Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,34 +20,40 @@
 //
 //     "Razer" is a trademark of Razer USA Ltd.
 // </copyright>
-// ---------------------------------------------------------------------------------------
 
-namespace Corale.Colore.Razer.Keyboard.Effects
+namespace Corale.Colore.Razer
 {
-    using System.Runtime.InteropServices;
+    using System;
 
-    using Corale.Colore.Annotations;
+    using KeyboardEffects = Corale.Colore.Razer.Keyboard.Effects.Effect;
 
     /// <summary>
-    /// The wave effect for the keyboard.
+    /// Gives information about the type of effect an effect struct describes.
     /// </summary>
-    [EffectType(Effect.Wave)]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Wave
+    [AttributeUsage(AttributeTargets.Struct)]
+    internal sealed class EffectTypeAttribute : Attribute
     {
         /// <summary>
-        /// Direction of wave effect.
+        /// Initializes a new instance of the <see cref="EffectTypeAttribute" /> class.
         /// </summary>
-        [PublicAPI]
-        public readonly Direction Direction;
+        /// <param name="effect">The general effect to construct from.</param>
+        internal EffectTypeAttribute(Effect effect)
+        {
+            Value = (int)effect;
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Wave" /> struct.
+        /// Initializes a new instance of the <see cref="EffectTypeAttribute" /> class.
         /// </summary>
-        /// <param name="direction">Direction of the wave.</param>
-        public Wave(Direction direction)
+        /// <param name="effect">The keyboard effect to construct from.</param>
+        internal EffectTypeAttribute(KeyboardEffects effect)
         {
-            Direction = direction;
+            Value = (int)effect;
         }
+
+        /// <summary>
+        /// Gets the integer value of the effect type.
+        /// </summary>
+        internal int Value { get; }
     }
 }

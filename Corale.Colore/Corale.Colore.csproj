@@ -135,6 +135,7 @@
     <Compile Include="Razer\Devices.cs" />
     <Compile Include="Razer\DeviceType.cs" />
     <Compile Include="Razer\Effect.cs" />
+    <Compile Include="Razer\EffectTypeAttribute.cs" />
     <Compile Include="Razer\Headset\Effects\Breathing.cs" />
     <Compile Include="Razer\Headset\Effects\Effect.cs" />
     <Compile Include="Razer\Headset\Effects\Static.cs" />

@@ -28,11 +28,13 @@ namespace Corale.Colore.Razer.Keyboard.Effects
     using System.Runtime.InteropServices;
 
     using Corale.Colore.Annotations;
-    using Corale.Colore.Core;
+
+    using Color = Corale.Colore.Core.Color;
 
     /// <summary>
     /// Describes the breathing effect.
     /// </summary>
+    [EffectType(Effect.Breathing)]
     [StructLayout(LayoutKind.Sequential)]
     public struct Breathing
     {

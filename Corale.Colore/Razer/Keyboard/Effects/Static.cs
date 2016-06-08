@@ -33,6 +33,7 @@ namespace Corale.Colore.Razer.Keyboard.Effects
     /// <summary>
     /// Describes the static effect type.
     /// </summary>
+    [EffectType(Effect.Static)]
     [StructLayout(LayoutKind.Sequential)]
     public struct Static
     {
